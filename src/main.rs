@@ -4,9 +4,13 @@ use calc::*;
 mod todo;
 use todo::*;
 
+mod suhu;
+use suhu::*;
+
 fn main() {
     calc_demo();
     todo_demo();
+    suhu_demo();
 }
 
 fn calc_demo() {
@@ -37,3 +41,5 @@ fn todo_demo() {
     todo.redo();
     println!("Redo todo : {:#?}\n", todo);
 }
+
+fn suhu_demo() {}
