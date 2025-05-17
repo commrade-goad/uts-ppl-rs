@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum TodoOperation {
     NEW,
     DEL,
@@ -22,7 +22,7 @@ impl Todo {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TodoHist {
     id: i32,
     before: Option<Todo>,
@@ -48,8 +48,38 @@ impl TodoList {
         return None;
     }
 
+    fn inverse_todohist(&self, hist: &mut TodoHist) {
+        match hist.operation {
+            TodoOperation::EDT => {}
+            TodoOperation::NEW => {
+                hist.operation = TodoOperation::DEL;
+                hist.before = Some(hist.after.clone().unwrap());
+                hist.after = None;
+            }
+            TodoOperation::DEL => {
+                hist.operation = TodoOperation::NEW;
+                hist.after = Some(hist.before.clone().unwrap());
+                hist.before = None;
+            }
+        }
+    }
+
     fn exec_todohist(&mut self, hist: &TodoHist) {
-        todo!();
+        match hist.operation {
+            TodoOperation::NEW => {
+                self.list.push(hist.after.clone().unwrap());
+            }
+            TodoOperation::DEL => {
+                if let Some((i, _)) = self.search_elm(hist.id) {
+                    self.list.remove(i);
+                }
+            }
+            TodoOperation::EDT => {
+                if let Some((_, t)) = self.search_elm(hist.id) {
+                    *t = hist.after.clone().unwrap();
+                }
+            }
+        }
     }
 
     pub fn new() -> Self {
@@ -61,7 +91,7 @@ impl TodoList {
         }
     }
 
-    pub fn add_todo(&mut self, todo: &mut Todo) {
+    pub fn add_todo(&mut self, todo: &mut Todo) -> i32{
         todo.id = self.counter;
         self.list.push(todo.clone());
         self.undo_list.push(TodoHist {
@@ -72,6 +102,7 @@ impl TodoList {
         });
         self.redo_list.clear();
         self.counter += 1;
+        return todo.id
     }
 
     pub fn del_todo(&mut self, id: i32) {
@@ -81,7 +112,7 @@ impl TodoList {
                 id: new_t.id,
                 before: Some(new_t),
                 after: None,
-                operation: TodoOperation::NEW,
+                operation: TodoOperation::DEL,
             });
             self.redo_list.clear();
             self.list.remove(i);
@@ -103,9 +134,17 @@ impl TodoList {
     }
 
     pub fn undo(&mut self) {
-        todo!();
+        if let Some(val) = self.undo_list.pop() {
+            let mut new_val: TodoHist = val.clone();
+            self.inverse_todohist(&mut new_val);
+            self.exec_todohist(&new_val);
+            self.redo_list.push(val.clone());
+        }
     }
     pub fn redo(&mut self) {
-        todo!();
+        if let Some(val) = self.redo_list.pop() {
+            self.exec_todohist(&val);
+            self.undo_list.push(val);
+        }
     }
 }
