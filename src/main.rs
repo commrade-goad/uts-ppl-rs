@@ -6,6 +6,8 @@ use todo::*;
 
 mod suhu;
 use suhu::*;
+use std::rc::Rc;
+use std::cell::RefCell;
 
 fn main() {
     calc_demo();
@@ -42,4 +44,16 @@ fn todo_demo() {
     println!("Redo todo : {:#?}\n", todo);
 }
 
-fn suhu_demo() {}
+fn suhu_demo() {
+    let mut station = TemperatureStation::new();
+
+    let display1 = Rc::new(RefCell::new(Display::new("Kamar Mandi")));
+    let display2 = Rc::new(RefCell::new(Display::new("Kamar Tidur")));
+
+    station.register_observer(display1.clone());
+    station.register_observer(display2.clone());
+
+    station.set_temperature(22.5, None);
+    station.set_temperature(25.0, None);
+
+}
