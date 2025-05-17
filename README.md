@@ -6,6 +6,10 @@
 cargo run # or cargo build
 ```
 
+__NOTE: Example implemntation at `main.rs`__
+
+- [Main Entry](./src/main.rs)
+
 ## 1. Strategy pattern untuk kalkulator
 
 - Strategy Pattern memungkinkan untuk mendefinisikan sekelompok algoritma (dalam hal ini, operasi matematika) dan membuatnya dapat dipertukarkan satu sama lain saat runtime. Pola ini memisahkan logika algoritma dari struktur utama aplikasi (tidak menggunakan switch atau if).
