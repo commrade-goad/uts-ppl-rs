@@ -1,5 +1,7 @@
 # UTS PPL
 
+__NOTE: There is a cpp ver on this [repo](https://github.com/commrade-goad/uts-ppl)__
+
 ## Build & Run
 
 ```sh
